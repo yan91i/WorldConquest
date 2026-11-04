@@ -175,7 +175,7 @@
   function resultItemHtml(c) {
     var n = S.nation[c.id];
     return '<button class="entry" data-pick="' + c.id + '">' +
-      '<span class="flag">' + WC.flag(c.iso2) + '</span>' +
+      WC.flagBadge(c.iso2) +
       '<span class="meta"><span class="nm">' + esc(cname(c)) + '</span>' +
       '<span class="sub2">' + esc(WC.lang === 'zh' ? c.name : c.zh) + '</span></span>' +
       '<span class="rt">' + WC.fmtMoneyU(c.gdp) + '<br>' + T('start.army', WC.fmtInt(n ? n.army : 0)) + '</span>' +
@@ -211,7 +211,7 @@
     pickedId = id;
     var c = S.byId[id], n = S.nation[id];
     $('ss-picked').innerHTML =
-      '<span class="flag">' + WC.flag(c.iso2) + '</span>' +
+      WC.flagBadge(c.iso2, 'flag-badge-lg') +
       '<span class="meta"><span class="nm">' + esc(cname(c)) + '</span>' +
       '<span class="sub2">' + esc(WC.lang === 'zh' ? c.name : c.zh) + ' · ' + esc(c.continent) +
       T('start.detail', WC.fmtMoneyU(c.gdp), WC.fmtNum(c.pop), WC.fmtInt(n ? n.army : 0)) +

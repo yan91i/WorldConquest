@@ -105,12 +105,31 @@ window.WC = window.WC || {};
   WC.fmtInt = function (n) { return Math.round(n).toLocaleString('en-US'); };
   WC.fmtPct = function (p, d) { return (p * 100).toFixed(d == null ? 1 : d) + '%'; };
 
-  // ---- 国旗 emoji ----
+  // ---- 国旗 ----
   WC.flag = function (iso2) {
     if (!iso2 || iso2.length !== 2 || !/^[A-Za-z]{2}$/.test(iso2)) return '🏳️';
     var base = 0x1f1e6;
     var a = iso2.toUpperCase();
     return String.fromCodePoint(base + a.charCodeAt(0) - 65, base + a.charCodeAt(1) - 65);
+  };
+
+  /** 真实国旗资源地址（用于 Windows 上 emoji 国旗退化为字母的场景） */
+  WC.flagUrl = function (iso2) {
+    if (!iso2 || iso2.length !== 2 || !/^[A-Za-z]{2}$/.test(iso2)) return '';
+    return 'https://flagcdn.com/' + iso2.toLowerCase() + '.svg';
+  };
+
+  /** 国旗徽标：底层保留 ISO 代码，图片加载成功后覆盖显示 */
+  WC.flagBadge = function (iso2, extraCls) {
+    var cls = 'flag-badge' + (extraCls ? ' ' + extraCls : '');
+    if (!iso2 || iso2.length !== 2 || !/^[A-Za-z]{2}$/.test(iso2)) {
+      return '<span class="' + cls + '" aria-hidden="true"><span class="flag-fallback">--</span></span>';
+    }
+    var code = iso2.toUpperCase();
+    return '<span class="' + cls + '" aria-hidden="true">' +
+      '<span class="flag-fallback">' + code + '</span>' +
+      '<img class="flag-img" src="' + WC.flagUrl(code) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">' +
+      '</span>';
   };
 
   // ---- 政区配色（中立国家使用的低饱和政治地图色）----
