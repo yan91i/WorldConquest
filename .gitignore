@@ -1,0 +1,7 @@
+# 编辑器 / 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Trae 打包缓存
+.trae-html-share-packages/

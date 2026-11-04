@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>World Conquest · Rise of Nations 世界征服</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🌍</text></svg>">
+</head>
+<body>
+
+<div id="app">
+  <svg id="map" aria-label="世界地图"></svg>
+
+  <!-- ============ 顶栏 ============ -->
+  <header id="topbar" class="hidden">
+    <div class="tb-nation">
+      <span id="tb-flag" class="flag">🏳️</span>
+      <span id="tb-name">—</span>
+    </div>
+
+    <div class="tb-stats">
+      <div class="tb-stat" data-tip-key="tip.treasury">
+        <span class="tb-ico">💰</span>
+        <span id="tb-treasury">—</span>
+        <span id="tb-balance" class="sub">—</span>
+      </div>
+      <div class="tb-stat" data-tip-key="tip.gdp">
+        <span class="tb-ico">📈</span>
+        <span id="tb-gdp">—</span>
+        <span id="tb-growth" class="sub">—</span>
+      </div>
+      <div class="tb-stat" data-tip-key="tip.pop">
+        <span class="tb-ico">👥</span>
+        <span id="tb-pop">—</span>
+      </div>
+      <div class="tb-stat" data-tip-key="tip.army">
+        <span class="tb-ico">🪖</span>
+        <span id="tb-manpower">—</span>
+        <span id="tb-manpower-cap" class="sub">—</span>
+      </div>
+      <div class="tb-stat" data-tip-key="tip.stability">
+        <span class="tb-ico">⚖️</span>
+        <span id="tb-stability">—</span>
+        <span id="tb-stability-trend" class="sub">—</span>
+      </div>
+      <div class="tb-stat" data-tip-key="tip.infamy">
+        <span class="tb-ico">💀</span>
+        <span id="tb-infamy">—</span>
+      </div>
+      <div class="tb-stat" data-tip-key="tip.domination">
+        <span class="tb-ico">🌍</span>
+        <span id="tb-domination">—</span>
+        <span id="tb-domination-sub" class="sub">—</span>
+      </div>
+    </div>
+
+    <div class="tb-time">
+      <span id="tb-date">2026年1月1日</span>
+      <div class="speed-controls" id="speedControls">
+        <button class="spd" id="btn-pause" data-speed="0" data-i18n-title="speed.pause">⏸</button>
+        <button class="spd" data-speed="0.5" data-i18n-title="speed.slow">🐌</button>
+        <button class="spd active" data-speed="1" data-i18n-title="speed.normal">▶</button>
+        <button class="spd" data-speed="2" data-i18n-title="speed.fast">▶▶</button>
+        <button class="spd" data-speed="4" data-i18n-title="speed.fastest">▶▶▶</button>
+      </div>
+      <button class="icon-btn" id="btn-sound" data-i18n-title="btn.sound">🔊</button>
+      <button class="icon-btn" id="btn-menu" data-i18n-title="btn.menu">☰</button>
+    </div>
+  </header>
+
+  <!-- ============ 左侧标签栏 ============ -->
+  <nav id="tabrail" class="hidden">
+    <button class="tab-btn active" data-tab="overview" data-i18n-title="tab.overview">🏛️<em class="badge hidden" id="event-badge">0</em></button>
+    <button class="tab-btn" data-tab="economy" data-i18n-title="tab.economy">💰</button>
+    <button class="tab-btn" data-tab="military" data-i18n-title="tab.military">🪖</button>
+    <button class="tab-btn" data-tab="tech" data-i18n-title="tab.tech">🔬</button>
+    <button class="tab-btn" data-tab="diplomacy" data-i18n-title="tab.diplomacy">🤝</button>
+    <button class="tab-btn" data-tab="wars" data-i18n-title="tab.wars">⚔️<em class="badge hidden" id="war-badge">0</em></button>
+    <button class="tab-btn" data-tab="ranking" data-i18n-title="tab.ranking">🏆</button>
+  </nav>
+
+  <!-- ============ 左侧主面板 ============ -->
+  <aside id="panel" class="glass hidden">
+    <div class="panel-head">
+      <h2 id="panel-title">概览</h2>
+      <button class="panel-close" id="panel-close" data-i18n-title="btn.collapse">✕</button>
+    </div>
+    <div id="panel-body"></div>
+  </aside>
+
+  <!-- ============ 右侧国家面板 ============ -->
+  <aside id="cpanel" class="glass hidden">
+    <div class="panel-head">
+      <h2 id="cp-title">目标地区</h2>
+      <button class="panel-close" id="cp-close" data-i18n-title="btn.close">✕</button>
+    </div>
+    <div id="cp-body"></div>
+  </aside>
+
+  <!-- ============ 右下战况 ============ -->
+  <div id="battlehud" class="glass hidden">
+    <h3 class="sec" data-i18n="hud.battle">战况</h3>
+    <div id="battle-list"></div>
+  </div>
+
+  <!-- ============ 地图控件 ============ -->
+  <div id="mapControls" class="glass hidden">
+    <button id="btnZoomIn" data-i18n-title="map.zoomIn">＋</button>
+    <button id="btnZoomOut" data-i18n-title="map.zoomOut">－</button>
+    <button id="btnFitWorld" data-i18n-title="map.world">🌐</button>
+    <button id="btnHome" data-i18n-title="map.home">🏠</button>
+  </div>
+
+  <!-- ============ 提示 ============ -->
+  <div id="maptip" class="hidden"></div>
+  <div id="tooltip" class="hidden"></div>
+  <div id="toasts"></div>
+
+  <!-- ============ 模态层 ============ -->
+  <div id="modal-layer" class="hidden">
+    <div id="modal" class="glass">
+      <div class="panel-head">
+        <h2 id="modal-title">—</h2>
+        <button class="panel-close" id="modal-close" data-i18n-title="btn.close">✕</button>
+      </div>
+      <div id="modal-body"></div>
+      <div id="modal-actions"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 开始界面 ============ -->
+<div id="startscreen">
+  <div class="ss-inner">
+    <h1 class="logo">WORLD CONQUEST</h1>
+    <div class="logo-sub">RISE OF NATIONS</div>
+    <p class="ss-hint" data-i18n="start.hint">选择一个国家开始游戏：发展经济、扩充军备、征服整个世界。</p>
+
+    <div class="ss-search-row">
+      <span class="ss-search-ico">🔍</span>
+      <input id="ss-search" type="text" data-i18n-ph="start.search" placeholder="搜索国家（中文 / English / 代码）…" autocomplete="off">
+    </div>
+
+    <div id="ss-results"></div>
+    <div id="ss-picked" class="hidden"></div>
+
+    <div class="ss-buttons">
+      <button id="ss-start" class="btn-primary big" data-i18n="start.pick" disabled>选择国家</button>
+    </div>
+
+    <div class="ss-foot">
+      <span id="ss-foot-hint" data-i18n="start.gdpSort">按 GDP 排序</span>
+      <button id="ss-random" class="btn-ghost" data-i18n="start.random">随机国家</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 结局界面 ============ -->
+<div id="endscreen" class="hidden">
+  <div class="end-box glass">
+    <h1 id="end-title">—</h1>
+    <p id="end-text"></p>
+    <div id="end-stats"></div>
+    <button id="btnRestart" class="btn-primary big" data-i18n="btn.restart">重新开始</button>
+  </div>
+</div>
+
+<!-- ============ 加载中 ============ -->
+<div id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" data-i18n="loading">正在构建世界…</div>
+</div>
+
+<script src="assets/data/countries.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/state.js"></script>
+<script src="assets/js/map.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
